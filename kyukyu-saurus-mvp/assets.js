@@ -1,4 +1,12 @@
 (function (global) {
+  if (typeof document !== 'undefined' && !document.querySelector('link[data-desktop-fix]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'desktop-fix.css';
+    link.dataset.desktopFix = '1';
+    document.head.appendChild(link);
+  }
+
   const PARTS = Array.from({ length: 8 }, (_, i) => `assets/sprite/part0${i}.txt`);
   const CELLS = {
     stage_00_egg: [0, 0],
