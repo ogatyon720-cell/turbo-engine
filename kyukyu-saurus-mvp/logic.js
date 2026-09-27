@@ -1,15 +1,33 @@
 (function (global) {
   const STAGES = [
-    { min: 750, id: 'special', name: 'とくべつな きょうりゅう', icon: '🦖✨', message: 'なんだか ふしぎな ちからを まとっている！' },
-    { min: 500, id: 'big', name: 'おおきな きょうりゅう', icon: '🦖', message: 'とっても おおきく そだったね！' },
-    { min: 350, id: 'child', name: 'こども きょうりゅう', icon: '🦕', message: 'げんきいっぱい！ いっしょに あそびたそう。' },
-    { min: 200, id: 'little', name: 'ちび きょうりゅう', icon: '🦕', message: 'すこしずつ できることが ふえてきた！' },
-    { min: 100, id: 'baby', name: 'あかちゃん きょうりゅう', icon: '🦕', message: 'すくすく そだっているよ。' },
-    { min: 50, id: 'hatched', name: 'うまれたて きょうりゅう', icon: '🐣🦕', message: 'やった！ たまごから うまれた！' },
-    { min: 30, id: 'cracked', name: 'ひびの はいった たまご', icon: '🥚⚡', message: 'ピシッ！ たまごに ひびが はいった！' },
-    { min: 10, id: 'wiggle', name: 'うごく たまご', icon: '🥚〰️', message: 'ゴトッ… なかで なにかが うごいた！' },
-    { min: 0, id: 'egg', name: 'ふしぎな たまご', icon: '🥚', message: 'なかに だれか いるのかな？' }
+    { min: 750, id: 'special', name: 'とくべつな きょうりゅう', icon: '🦖✨', asset: 'stage_07_grown', message: 'なんだか ふしぎな ちからを まとっている！' },
+    { min: 500, id: 'big', name: 'おおきな きょうりゅう', icon: '🦖', asset: 'stage_07_grown', message: 'とっても おおきく そだったね！' },
+    { min: 350, id: 'child', name: 'こども きょうりゅう', icon: '🦕', asset: 'stage_06_kid', message: 'げんきいっぱい！ いっしょに あそびたそう。' },
+    { min: 200, id: 'little', name: 'ちび きょうりゅう', icon: '🦕', asset: 'stage_05_small', message: 'すこしずつ できることが ふえてきた！' },
+    { min: 100, id: 'baby', name: 'あかちゃん きょうりゅう', icon: '🦕', asset: 'stage_04_baby', message: 'すくすく そだっているよ。' },
+    { min: 50, id: 'hatched', name: 'うまれたて きょうりゅう', icon: '🐣🦕', asset: 'stage_03_hatch', message: 'やった！ たまごから うまれた！' },
+    { min: 30, id: 'cracked', name: 'ひびの はいった たまご', icon: '🥚⚡', asset: 'stage_02_egg_crack', message: 'ピシッ！ たまごに ひびが はいった！' },
+    { min: 10, id: 'wiggle', name: 'うごく たまご', icon: '🥚〰️', asset: 'stage_01_egg_shake', message: 'ゴトッ… なかで なにかが うごいた！' },
+    { min: 0, id: 'egg', name: 'ふしぎな たまご', icon: '🥚', asset: 'stage_00_egg', message: 'なかに だれか いるのかな？' }
   ];
+
+  const TEST_STAGES = [
+    { points: 0, label: 'たまご', asset: 'stage_00_egg' },
+    { points: 10, label: 'ゆれる', asset: 'stage_01_egg_shake' },
+    { points: 30, label: 'ひび', asset: 'stage_02_egg_crack' },
+    { points: 50, label: 'ふか', asset: 'stage_03_hatch' },
+    { points: 100, label: 'あかちゃん', asset: 'stage_04_baby' },
+    { points: 200, label: 'ちび', asset: 'stage_05_small' },
+    { points: 350, label: 'こども', asset: 'stage_06_kid' },
+    { points: 500, label: 'せいちょう', asset: 'stage_07_grown' }
+  ];
+
+  const ACTION_ASSETS = {
+    feed: 'action_feed',
+    pet: 'action_pet',
+    play: 'action_play',
+    sleep: 'action_sleep'
+  };
 
   function bonusForCorrect(correct) {
     const n = Number(correct);
@@ -48,7 +66,7 @@
     return shuffled(allFacts(), rng).slice(0, count);
   }
 
-  const api = { STAGES, bonusForCorrect, pointsForWorksheet, stageForPoints, nextStageForPoints, allFacts, generateWorksheet };
+  const api = { STAGES, TEST_STAGES, ACTION_ASSETS, bonusForCorrect, pointsForWorksheet, stageForPoints, nextStageForPoints, allFacts, generateWorksheet };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   global.GameLogic = api;
 })(typeof window !== 'undefined' ? window : globalThis);
