@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>九九プリント | きゅうきゅうザウルス</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="print-controls">
+    <a href="index.html">← もどる</a>
+    <button onclick="location.reload()">🔀 べつの30問</button>
+    <button onclick="window.print()">🖨️ 印刷する</button>
+  </div>
+  <article class="worksheet-shell">
+    <header class="worksheet-head">
+      <div>
+        <div class="worksheet-title">きょうの 九九　30もん</div>
+        <div style="margin-top:3mm;font-size:13pt">めざせ 10ぷん！　さいごまで やってみよう</div>
+      </div>
+      <div class="worksheet-meta">なまえ ____________________<br><span id="date"></span><br>ID: <span id="widShort"></span></div>
+    </header>
+    <section id="problems" class="problem-grid"></section>
+    <section class="qr-area">
+      <div class="qr-copy">ぜんぶ おわったら<br>おうちの人と こたえあわせ。<br>そのあと QRを よみこんでね！ 🦖</div>
+      <div>
+        <img id="qr" class="qr-img" alt="採点登録QRコード" />
+        <div style="font-size:8pt;max-width:40mm;word-break:break-all;margin-top:2mm" id="resultUrlText"></div>
+      </div>
+    </section>
+  </article>
+
+  <article class="worksheet-shell answer-key">
+    <header class="worksheet-head">
+      <div><div class="worksheet-title">おうちの人用　こたえ</div><div style="margin-top:3mm;font-size:12pt">○をつけたら、正解数（0〜30問）だけQR先で入力してください。</div></div>
+      <div class="worksheet-meta">ID: <span id="answerWid"></span></div>
+    </header>
+    <section id="answers" class="answer-grid"></section>
+    <p style="margin-top:12mm;font-size:12pt">正解数： ______ / 30　　かかった時間： ______ 分</p>
+  </article>
+
+  <script src="logic.js"></script>
+  <script>
+    const id = (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+    const facts = GameLogic.generateWorksheet(30);
+    const resultUrl = new URL('result.html', location.href);
+    resultUrl.searchParams.set('wid', id);
+
+    const problems = document.getElementById('problems');
+    const answers = document.getElementById('answers');
+    facts.forEach((f, i) => {
+      const p = document.createElement('div');
+      p.className = 'problem';
+      p.textContent = `${String(i + 1).padStart(2, ' ')}.  ${f.a} × ${f.b} = ______`;
+      problems.appendChild(p);
+      const a = document.createElement('div');
+      a.className = 'answer-item';
+      a.textContent = `${i + 1}. ${f.a} × ${f.b} = ${f.answer}`;
+      answers.appendChild(a);
+    });
+
+    const today = new Date();
+    document.getElementById('date').textContent = `${today.getFullYear()}年 ${today.getMonth()+1}月 ${today.getDate()}日`;
+    document.getElementById('widShort').textContent = id.slice(0, 8);
+    document.getElementById('answerWid').textContent = id.slice(0, 8);
+    document.getElementById('resultUrlText').textContent = resultUrl.toString();
+
+    document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=${encodeURIComponent(resultUrl.toString())}`;
+  </script>
+</body>
+</html>
