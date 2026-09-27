@@ -17,7 +17,7 @@
     if (!document.querySelector('link[data-balance-fix]')) {
       const balance = document.createElement('link');
       balance.rel = 'stylesheet';
-      balance.href = 'balance-fix.css?v=2';
+      balance.href = 'balance-fix.css?v=4';
       balance.dataset.balanceFix = '1';
       document.head.appendChild(balance);
     }
@@ -67,11 +67,11 @@
 
   function updateReactionPreviewControls(stage) {
     if (typeof document === 'undefined') return;
-    const allow = stage && stage.asset === 'stage_05_small';
+    const allow = stage && stage.asset === 'stage_04_baby';
     document.querySelectorAll('#sceneChips .scene-chip').forEach((button) => {
       if (button.dataset.scene === 'normal') return;
       button.disabled = !allow;
-      button.title = allow ? '' : 'リアクション差分は「ちび恐竜」で確認できます';
+      button.title = allow ? '' : 'リアクション差分は「あかちゃん」で確認できます';
       button.style.opacity = allow ? '1' : '.38';
       button.style.cursor = allow ? 'pointer' : 'not-allowed';
     });
@@ -86,16 +86,14 @@
       updateReactionPreviewControls(stage);
 
       const isActionAsset = String(key).startsWith('action_');
-      if (isActionAsset && stage.asset !== 'stage_05_small') {
-        // The current reaction artwork belongs only to the small dinosaur.
-        // Fall back completely to the current stage rather than mixing ages.
+      if (isActionAsset && stage.asset !== 'stage_04_baby') {
+        // The current care artwork visually matches the baby stage.
+        // Never mix this artwork into other growth stages.
         key = stage.asset;
         try {
           if (typeof previewScene !== 'undefined') previewScene = 'normal';
         } catch (_) {}
-      } else if (stage.asset === 'stage_05_small' && key === 'action_feed') {
-        // UI care type is "food" while the artwork/test scene name is "feed".
-        // Normalize it so the test title and active chip stay consistent too.
+      } else if (stage.asset === 'stage_04_baby' && key === 'action_feed') {
         try {
           if (typeof previewScene !== 'undefined' && previewScene === 'food') previewScene = 'feed';
         } catch (_) {}
