@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>おせわ | きゅうきゅうザウルス</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <div class="brand">きょうりゅうの おせわ</div>
+    <section class="card hero">
+      <div id="creature" class="creature">🥚</div>
+      <div id="name" class="stage-name">ふしぎな たまご</div>
+      <p id="reaction" class="message">きょうは なにをしてあげる？</p>
+      <div class="notice">おせわできる回数：<strong id="tokens">0</strong> 回</div>
+    </section>
+    <section class="card">
+      <div class="grid-3">
+        <button class="care-btn" data-care="food"><span class="emoji">🍖</span><span>ごはん</span></button>
+        <button class="care-btn" data-care="pet"><span class="emoji">💕</span><span>なでなで</span></button>
+        <button class="care-btn" data-care="play"><span class="emoji">⚽</span><span>あそぶ</span></button>
+      </div>
+      <a class="secondary" href="index.html">← おうちにもどる</a>
+    </section>
+  </main>
+  <script src="logic.js"></script>
+  <script src="store.js"></script>
+  <script>
+    const reactions = {
+      food: ['もぐもぐ……おいしい！', 'おなかいっぱい！ うれしそう。', 'もっと おおきくなれそう！'],
+      pet: ['きもちよさそうに 目をほそめている。', 'もっと なでてほしそう！', 'ぴったり くっついてきた！'],
+      play: ['わーい！ げんきいっぱい！', 'たのしそうに かけまわった！', 'もういっかい！ と言っているみたい。']
+    };
+    function render() {
+      const state = GameStore.getState();
+      const stage = GameLogic.stageForPoints(state.growthPoints);
+      document.getElementById('creature').textContent = stage.icon;
+      document.getElementById('name').textContent = state.dinosaurName || stage.name;
+      document.getElementById('tokens').textContent = state.careTokens;
+      document.querySelectorAll('[data-care]').forEach(btn => btn.disabled = state.careTokens <= 0);
+      if (state.careTokens <= 0) document.getElementById('reaction').textContent = '九九プリントをすると、おせわが1回できるよ。';
+    }
+    document.querySelectorAll('[data-care]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = btn.dataset.care;
+        const result = GameStore.useCare(type);
+        if (!result.success) return render();
+        const options = reactions[type];
+        document.getElementById('reaction').textContent = options[Math.floor(Math.random() * options.length)];
+        render();
+      });
+    });
+    render();
+  </script>
+</body>
+</html>
