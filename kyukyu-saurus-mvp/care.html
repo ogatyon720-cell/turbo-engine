@@ -9,48 +9,112 @@
 <body>
   <main class="shell">
     <div class="brand">きょうりゅうの おせわ</div>
+    <div id="testBadge" class="test-badge" hidden>🧪 テストモード：回数を消費しません</div>
+
     <section class="card hero">
-      <div id="creature" class="creature">🥚</div>
+      <div id="creature" class="creature dino-sprite" aria-label="きょうりゅう"></div>
       <div id="name" class="stage-name">ふしぎな たまご</div>
       <p id="reaction" class="message">きょうは なにをしてあげる？</p>
-      <div class="notice">おせわできる回数：<strong id="tokens">0</strong> 回</div>
+      <div class="notice">おせわできる回数：<strong id="tokens">0</strong><span id="tokenSuffix"> 回</span></div>
     </section>
+
     <section class="card">
-      <div class="grid-3">
+      <div class="grid-4">
         <button class="care-btn" data-care="food"><span class="emoji">🍖</span><span>ごはん</span></button>
         <button class="care-btn" data-care="pet"><span class="emoji">💕</span><span>なでなで</span></button>
         <button class="care-btn" data-care="play"><span class="emoji">⚽</span><span>あそぶ</span></button>
+        <button class="care-btn" data-care="sleep"><span class="emoji">💤</span><span>ねる</span></button>
       </div>
-      <a class="secondary" href="index.html">← おうちにもどる</a>
+      <button id="normalView" class="secondary" type="button">通常の姿にもどす</button>
+      <a id="homeLink" class="secondary" href="index.html">← おうちにもどる</a>
     </section>
   </main>
+
   <script src="logic.js"></script>
   <script src="store.js"></script>
+  <script src="assets.js"></script>
   <script>
+    const params = new URLSearchParams(location.search);
+    const isTest = params.get('test') === '1';
+    const testPointsRaw = Number(params.get('points'));
+    const testPoints = Number.isFinite(testPointsRaw) ? Math.max(0, testPointsRaw) : GameStore.getState().growthPoints;
+    let activeCare = null;
+
+    const careToScene = { food: 'feed', pet: 'pet', play: 'play', sleep: 'sleep' };
     const reactions = {
       food: ['もぐもぐ……おいしい！', 'おなかいっぱい！ うれしそう。', 'もっと おおきくなれそう！'],
       pet: ['きもちよさそうに 目をほそめている。', 'もっと なでてほしそう！', 'ぴったり くっついてきた！'],
-      play: ['わーい！ げんきいっぱい！', 'たのしそうに かけまわった！', 'もういっかい！ と言っているみたい。']
+      play: ['わーい！ げんきいっぱい！', 'たのしそうに かけまわった！', 'もういっかい！ と言っているみたい。'],
+      sleep: ['すやすや……いいゆめ みてね。', 'ぐっすり ねむっているよ。', 'きょうも よくがんばったね。']
     };
-    function render() {
+
+    function viewState() {
       const state = GameStore.getState();
-      const stage = GameLogic.stageForPoints(state.growthPoints);
-      document.getElementById('creature').textContent = stage.icon;
-      document.getElementById('name').textContent = state.dinosaurName || stage.name;
-      document.getElementById('tokens').textContent = state.careTokens;
-      document.querySelectorAll('[data-care]').forEach(btn => btn.disabled = state.careTokens <= 0);
-      if (state.careTokens <= 0) document.getElementById('reaction').textContent = '九九プリントをすると、おせわが1回できるよ。';
+      return isTest ? { ...state, growthPoints: testPoints } : state;
     }
+
+    async function render(message) {
+      const state = viewState();
+      const actual = GameStore.getState();
+      const stage = GameLogic.stageForPoints(state.growthPoints);
+      const canShowCareArt = isTest || state.growthPoints >= 50;
+      const scene = activeCare ? careToScene[activeCare] : null;
+      const asset = scene && canShowCareArt ? GameLogic.ACTION_ASSETS[scene] : stage.asset;
+      await GameAssets.show(document.getElementById('creature'), asset);
+
+      document.getElementById('name').textContent = state.dinosaurName || stage.name;
+      if (message) {
+        document.getElementById('reaction').textContent = message;
+      } else if (!isTest && actual.careTokens <= 0) {
+        document.getElementById('reaction').textContent = '九九プリントをすると、おせわが1回できるよ。';
+      } else {
+        document.getElementById('reaction').textContent = 'きょうは なにをしてあげる？';
+      }
+
+      if (isTest) {
+        document.getElementById('testBadge').hidden = false;
+        document.getElementById('tokens').textContent = '∞';
+        document.getElementById('tokenSuffix').textContent = '（テスト）';
+        document.getElementById('homeLink').href = 'index.html?test=1';
+      } else {
+        document.getElementById('tokens').textContent = actual.careTokens;
+        document.getElementById('tokenSuffix').textContent = ' 回';
+      }
+      document.querySelectorAll('[data-care]').forEach(btn => btn.disabled = !isTest && actual.careTokens <= 0);
+    }
+
     document.querySelectorAll('[data-care]').forEach(btn => {
       btn.addEventListener('click', () => {
         const type = btn.dataset.care;
-        const result = GameStore.useCare(type);
-        if (!result.success) return render();
+        activeCare = type;
         const options = reactions[type];
-        document.getElementById('reaction').textContent = options[Math.floor(Math.random() * options.length)];
-        render();
+        const message = options[Math.floor(Math.random() * options.length)];
+
+        if (isTest) {
+          render(message);
+          return;
+        }
+
+        const before = GameStore.getState();
+        const result = GameStore.useCare(type);
+        if (!result.success) {
+          activeCare = null;
+          render();
+          return;
+        }
+        if (before.growthPoints < 50) {
+          render('たまごを そっと おせわしたよ。なかで うれしそうに うごいた！');
+        } else {
+          render(message);
+        }
       });
     });
+
+    document.getElementById('normalView').addEventListener('click', () => {
+      activeCare = null;
+      render();
+    });
+
     render();
   </script>
 </body>
