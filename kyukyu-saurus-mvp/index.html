@@ -6,221 +6,383 @@
   <title>きゅうきゅうザウルス</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <main class="shell">
-    <div class="brand">きゅうきゅうザウルス</div>
-    <div class="subbrand">九九をがんばると、きょうりゅうが そだつよ</div>
-    <div id="testBadge" class="test-badge" hidden>🧪 テストモード</div>
-
-    <section class="card hero">
-      <div id="creature" class="creature dino-sprite" aria-label="きょうりゅう"></div>
-      <div id="stageName" class="stage-name">ふしぎな たまご</div>
-      <div id="dinoNameLine" style="font-weight:900;position:relative;z-index:1"></div>
-      <p id="stageMessage" class="message">なかに だれか いるのかな？</p>
-      <div id="recentNotice"></div>
-
-      <div class="progress-wrap">
-        <div class="progress-label"><span>つぎの へんかまで</span><span id="progressText"></span></div>
-        <div class="progress"><div id="progressBar" style="width:0%"></div></div>
+<body class="game-body">
+  <div class="game-app">
+    <header class="game-header">
+      <a class="game-logo" href="index.html" aria-label="ホーム">
+        <span class="logo-egg">🥚</span>
+        <span>きゅうきゅう<span>ザウルス</span></span>
+      </a>
+      <nav class="game-nav" aria-label="メインメニュー">
+        <a class="nav-item active" href="index.html">⌂ <span>ホーム</span></a>
+        <a class="nav-item" href="worksheet.html">▤ <span>プリントをつくる</span></a>
+        <button class="nav-item nav-placeholder" type="button">▥ <span>きろく</span></button>
+        <button class="nav-item nav-placeholder" type="button">▣ <span>ずかん</span></button>
+        <button class="nav-item nav-placeholder" type="button">⚙ <span>せってい</span></button>
+      </nav>
+      <div class="mode-switch" aria-label="表示モード">
+        <button id="normalModeBtn" class="mode-option active" type="button">通常</button>
+        <button id="testModeBtn" class="mode-option" type="button">テストモード</button>
       </div>
+    </header>
 
-      <div class="stats">
-        <div class="stat"><strong id="worksheets">0</strong><span>プリント</span></div>
-        <div class="stat"><strong id="points">0</strong><span>せいちょう</span></div>
-        <div class="stat"><strong id="careTokens">0</strong><span>おせわ</span></div>
-      </div>
+    <main class="dashboard-grid">
+      <aside class="left-column">
+        <section class="dash-card profile-card">
+          <div class="profile-top">
+            <div class="avatar">🦖</div>
+            <div>
+              <div class="profile-name">きょうの ぼうけん</div>
+              <span class="grade-pill">1ねんせい</span>
+            </div>
+          </div>
+          <div class="mini-level-row">
+            <span>⭐ レベル <strong id="levelValue">1</strong></span>
+            <span id="levelRemain">あと 10 pt</span>
+          </div>
+          <div class="mini-progress"><div id="levelBar"></div></div>
+        </section>
 
-      <a class="primary" href="worksheet.html">✏️ きょうの九九プリントをつくる</a>
-      <a id="careLink" class="secondary" href="care.html">💚 きょうりゅうを おせわする</a>
-    </section>
+        <section class="dash-card study-card">
+          <div class="section-head compact">
+            <span>📅 きょうのがくしゅう</span>
+            <span id="todayLabel" class="muted-small"></span>
+          </div>
+          <a class="worksheet-cta" href="worksheet.html">
+            <span class="worksheet-icon">📝</span>
+            <span><small>きょうの</small><strong>九九プリントをつくる</strong></span>
+            <span class="cta-arrow">›</span>
+          </a>
+          <div class="mini-stats">
+            <div><span>▤</span><small>つくったプリント</small><strong id="worksheets">0</strong><em>まい</em></div>
+            <div><span>▥</span><small>せいちょうポイント</small><strong id="points">0</strong><em>pt</em></div>
+            <div><span>♥</span><small>おせわしたかいすう</small><strong id="careCount">0</strong><em>かい</em></div>
+          </div>
+        </section>
 
-    <section id="testPanel" class="card test-panel" hidden>
-      <h2>🧪 テストプレイ操作</h2>
-      <div class="test-note">ここで変えた値はプレビューだけです。「本番データに反映」を押すまで、娘さんの育成データは変わりません。</div>
+        <section class="dash-card history-card">
+          <div class="section-head compact"><span>◷ さいきんのとりくみ</span><span class="muted-small">さいしん</span></div>
+          <div id="activityList" class="activity-list"></div>
+        </section>
+      </aside>
 
-      <div class="test-section-title">成長ステージを直接見る</div>
-      <div id="stageChips" class="stage-chips"></div>
+      <section class="center-column">
+        <div class="hero-panel">
+          <div class="hero-topline">
+            <span class="current-pill">🥚 いまのすがた</span>
+          </div>
+          <h1 id="stageTitle">ふしぎな たまご</h1>
+          <div id="dinoNameLine" class="dino-name"></div>
+          <div id="speechBubble" class="speech-bubble">なかに だれか いるのかな？</div>
+          <div class="stage-scene">
+            <div id="creature" class="creature dino-sprite" aria-label="きょうりゅう"></div>
+          </div>
+          <div id="recentNotice" class="hero-notice"></div>
 
-      <div class="test-grid">
-        <div class="field">
-          <label for="testPoints">成長Pt</label>
-          <input id="testPoints" type="number" min="0" max="2000" step="1" />
+          <div class="growth-panel">
+            <div class="growth-label-row">
+              <span>つぎのせいちょうまで</span>
+              <strong id="progressText">あと 10 ポイント</strong>
+            </div>
+            <div class="progress"><div id="progressBar" style="width:0%"></div></div>
+            <div id="milestoneRoadmap" class="milestone-roadmap"></div>
+          </div>
         </div>
-        <div class="field">
-          <label for="testWorksheets">プリント枚数</label>
-          <input id="testWorksheets" type="number" min="0" max="999" step="1" />
-        </div>
-        <div class="field">
-          <label for="testTokens">おせわ回数</label>
-          <input id="testTokens" type="number" min="0" max="999" step="1" />
-        </div>
-      </div>
+      </section>
 
-      <div class="test-section-title">表示シーンを強制切替</div>
-      <div id="sceneChips" class="scene-chips">
-        <button class="scene-chip active" data-scene="normal">通常</button>
-        <button class="scene-chip" data-scene="feed">🍖 ごはん</button>
-        <button class="scene-chip" data-scene="pet">💕 なでなで</button>
-        <button class="scene-chip" data-scene="play">⚽ あそぶ</button>
-        <button class="scene-chip" data-scene="sleep">💤 ねる</button>
-      </div>
+      <aside class="right-column">
+        <section class="dash-card care-card">
+          <div class="care-title">♥ おせわをしよう</div>
+          <div class="care-grid">
+            <button class="care-tile" id="feedBtn" data-care="food" type="button">
+              <span class="care-icon">🍖</span><strong>ごはんをあげる</strong><small id="feedHint">おせわできるよ</small>
+            </button>
+            <button class="care-tile" id="playBtn" data-care="play" type="button">
+              <span class="care-icon">⚽</span><strong>あそぶ</strong><small id="playHint">いっしょにあそぼう</small>
+            </button>
+            <button class="care-tile active-pink" id="observeBtn" type="button">
+              <span class="care-icon">🔎</span><strong>ようすをみる</strong><small>いまのようすを かんさつ</small>
+            </button>
+            <button class="care-tile active-yellow" id="petBtn" data-care="pet" type="button">
+              <span class="care-icon">✋</span><strong>なでなで</strong><small>やさしく なでてあげよう</small>
+            </button>
+          </div>
+          <div id="careHelp" class="care-help"></div>
+          <div class="care-balance">おせわできる回数：<strong id="careTokens">0</strong> 回</div>
+        </section>
 
-      <div class="test-actions">
-        <button id="resetPreview" class="test-btn ghost">現在の本番値に戻す</button>
-        <button id="applyPreview" class="test-btn">本番データに反映</button>
-      </div>
-      <a class="secondary" href="index.html">テストモードを終了</a>
-    </section>
+        <section id="testPanel" class="dash-card integrated-test" hidden>
+          <div class="test-head">
+            <span>🧪 テストモード</span>
+            <span class="test-live">ON</span>
+          </div>
+          <p>本番データを変えずに、各場面を確認できます。</p>
+          <div class="test-control">
+            <label>すがた（ステージ）</label>
+            <div id="stageChips" class="stage-thumb-row"></div>
+          </div>
+          <div class="test-inline-grid">
+            <label>せいちょうPt<input id="testPoints" type="number" min="0" max="2000" step="1" /></label>
+            <label>おせわ回数<input id="testTokens" type="number" min="0" max="999" step="1" /></label>
+          </div>
+          <div class="test-control">
+            <label>リアクションをみる</label>
+            <div id="sceneChips" class="scene-mini-row">
+              <button class="scene-chip active" data-scene="normal" type="button">通常</button>
+              <button class="scene-chip" data-scene="feed" type="button">ごはん</button>
+              <button class="scene-chip" data-scene="pet" type="button">なでなで</button>
+              <button class="scene-chip" data-scene="play" type="button">あそぶ</button>
+              <button class="scene-chip" data-scene="sleep" type="button">ねる</button>
+            </div>
+          </div>
+          <div class="test-actions-inline">
+            <button id="resetPreview" type="button">本番値にもどす</button>
+            <button id="applyPreview" type="button">本番に反映</button>
+          </div>
+        </section>
 
-    <section id="nameCard" class="card" hidden>
-      <h2 style="margin-top:0">なまえを つけよう！</h2>
-      <p class="small">たまごから うまれたら、きょうりゅうに好きな名前をつけられます。</p>
-      <div class="form-row">
-        <div class="field"><label for="dinoName">きょうりゅうの なまえ</label><input id="dinoName" type="text" maxlength="20" /></div>
-        <button id="saveName" class="primary" style="width:auto;margin:0;box-shadow:none">きめる</button>
-      </div>
-    </section>
+        <section id="nameCard" class="dash-card name-card" hidden>
+          <div class="section-head compact"><span>✏️ なまえをつけよう</span></div>
+          <div class="name-row">
+            <input id="dinoName" type="text" maxlength="20" placeholder="きょうりゅうの名前" />
+            <button id="saveName" type="button">きめる</button>
+          </div>
+        </section>
+      </aside>
+    </main>
 
-    <section class="card parent-box">
-      <details>
-        <summary>おうちの人へ</summary>
-        <p class="small">このMVPはデータをこの端末のブラウザ内に保存します。プリントはPCで作成しても構いませんが、採点QRは毎回同じスマホで読み取ると、恐竜の成長が1か所にまとまります。</p>
-        <p class="small">採点：0〜24問=10pt、25〜27問=11pt、28〜29問=13pt、30問=15pt。プリント1枚につき「おせわ」1回が追加されます。</p>
-        <a id="testModeLink" class="secondary" href="index.html?test=1">🧪 テストモードを開く</a>
-        <button id="reset" class="danger" style="margin-top:14px">この端末の育成データをリセット</button>
-      </details>
-    </section>
-  </main>
+    <div class="parent-tools">
+      <button id="reset" type="button">育成データをリセット</button>
+    </div>
+  </div>
+
   <script src="logic.js"></script>
   <script src="store.js"></script>
   <script src="assets.js"></script>
   <script>
-    const params = new URLSearchParams(location.search);
-    const isTest = params.get('test') === '1';
     const clone = (value) => JSON.parse(JSON.stringify(value));
     const clampInt = (value, min, max) => Math.min(max, Math.max(min, Math.round(Number(value) || 0)));
+    let isTest = false;
     let previewState = clone(GameStore.getState());
     let previewScene = 'normal';
+
+    const milestoneDefs = [
+      { asset:'stage_00_egg', label:'たまご' },
+      { asset:'stage_04_baby', label:'あかちゃん' },
+      { asset:'stage_05_small', label:'ようじ' },
+      { asset:'stage_06_kid', label:'せいちょう' },
+      { asset:'stage_07_grown', label:'せいじゅく' }
+    ];
 
     function currentViewState() {
       return isTest ? previewState : GameStore.getState();
     }
 
-    function syncTestInputs() {
+    function totalCareCount(state) {
+      return Object.values(state.careCounts || {}).reduce((sum, n) => sum + (Number(n) || 0), 0);
+    }
+
+    function isEggStage(stage) {
+      return ['stage_00_egg','stage_01_egg_shake','stage_02_egg_crack','stage_03_hatch'].includes(stage.asset);
+    }
+
+    function stageIndex(asset) {
+      const idx = GameLogic.TEST_STAGES.findIndex(item => item.asset === asset);
+      return Math.max(0, idx);
+    }
+
+    function setMode(testMode) {
+      isTest = testMode;
+      if (isTest) {
+        previewState = clone(GameStore.getState());
+        previewScene = 'normal';
+      }
+      document.getElementById('normalModeBtn').classList.toggle('active', !isTest);
+      document.getElementById('testModeBtn').classList.toggle('active', isTest);
+      document.getElementById('testPanel').hidden = !isTest;
+      render();
+    }
+
+    function buildRoadmap(activeAsset) {
+      const activeIdx = stageIndex(activeAsset);
+      const roadmap = document.getElementById('milestoneRoadmap');
+      roadmap.innerHTML = '';
+      milestoneDefs.forEach((item, index) => {
+        const fullIdx = stageIndex(item.asset);
+        const node = document.createElement('div');
+        node.className = 'milestone' + (fullIdx <= activeIdx ? ' reached' : '') + (item.asset === activeAsset ? ' current' : '');
+        node.innerHTML = `<div class="milestone-img dino-sprite" data-asset="${item.asset}"></div><span>${item.label}</span>`;
+        roadmap.appendChild(node);
+        if (index < milestoneDefs.length - 1) {
+          const arrow = document.createElement('span');
+          arrow.className = 'milestone-arrow';
+          arrow.textContent = '›';
+          roadmap.appendChild(arrow);
+        }
+      });
+      roadmap.querySelectorAll('[data-asset]').forEach(el => GameAssets.show(el, el.dataset.asset));
+    }
+
+    function syncTestInputs(stage) {
       if (!isTest) return;
       document.getElementById('testPoints').value = previewState.growthPoints;
-      document.getElementById('testWorksheets').value = previewState.worksheetsCompleted;
       document.getElementById('testTokens').value = previewState.careTokens;
-      const activeAsset = GameLogic.stageForPoints(previewState.growthPoints).asset;
-      document.querySelectorAll('.stage-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.asset === activeAsset));
+      document.querySelectorAll('.stage-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.asset === stage.asset));
       document.querySelectorAll('.scene-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.scene === previewScene));
+    }
+
+    function renderActivity(state) {
+      const list = document.getElementById('activityList');
+      const rows = [];
+      if (state.lastResult) rows.push(`九九プリント：${state.lastResult.correct}/30もん せいかい`);
+      if (state.lastCare) {
+        const labels = {food:'ごはんをあげた', pet:'なでなでした', play:'いっしょにあそんだ', sleep:'ねかせた'};
+        rows.push(labels[state.lastCare.type] || 'おせわをした');
+      }
+      rows.push(`せいちょうポイント ${state.growthPoints} pt`);
+      rows.push(`プリント ${state.worksheetsCompleted} まい`);
+      list.innerHTML = rows.slice(0,4).map(text => `<div><span>•</span><p>${text}</p></div>`).join('');
     }
 
     async function render() {
       const state = currentViewState();
       const stage = GameLogic.stageForPoints(state.growthPoints);
       const next = GameLogic.nextStageForPoints(state.growthPoints);
-      const asset = previewScene === 'normal' ? stage.asset : GameLogic.ACTION_ASSETS[previewScene];
-      await GameAssets.show(document.getElementById('creature'), asset);
+      const eggMode = isEggStage(stage);
+      const forcedAsset = previewScene === 'normal' ? stage.asset : GameLogic.ACTION_ASSETS[previewScene];
 
-      document.getElementById('stageName').textContent = previewScene === 'normal' ? stage.name : `テスト：${({feed:'ごはん',pet:'なでなで',play:'あそぶ',sleep:'ねる'})[previewScene]}`;
-      document.getElementById('stageMessage').textContent = previewScene === 'normal' ? stage.message : 'おせわリアクションをプレビューしています。';
+      await GameAssets.show(document.getElementById('creature'), forcedAsset);
+      document.getElementById('stageTitle').textContent = previewScene === 'normal' ? stage.name : `テスト：${({feed:'ごはん',pet:'なでなで',play:'あそぶ',sleep:'ねる'})[previewScene]}`;
+      document.getElementById('speechBubble').textContent = previewScene === 'normal' ? stage.message : 'リアクションをプレビューしています。';
+      document.getElementById('dinoNameLine').textContent = state.dinosaurName ? `「${state.dinosaurName}」` : '';
       document.getElementById('worksheets').textContent = state.worksheetsCompleted;
       document.getElementById('points').textContent = state.growthPoints;
       document.getElementById('careTokens').textContent = state.careTokens;
-      document.getElementById('dinoNameLine').textContent = state.dinosaurName ? `「${state.dinosaurName}」` : '';
+      document.getElementById('careCount').textContent = totalCareCount(state);
+
+      const level = Math.max(1, stageIndex(stage.asset) + 1);
+      document.getElementById('levelValue').textContent = level;
+      const levelRemain = next ? Math.max(0, next.min - state.growthPoints) : 0;
+      document.getElementById('levelRemain').textContent = next ? `あと ${levelRemain} pt` : 'さいこう！';
 
       if (next) {
-        const currentMin = stage.min;
-        const span = Math.max(1, next.min - currentMin);
-        const current = Math.max(0, state.growthPoints - currentMin);
+        const span = Math.max(1, next.min - stage.min);
+        const current = Math.max(0, state.growthPoints - stage.min);
         const pct = Math.min(100, Math.round((current / span) * 100));
         document.getElementById('progressBar').style.width = `${pct}%`;
-        document.getElementById('progressText').textContent = `あと ${next.min - state.growthPoints}`;
+        document.getElementById('levelBar').style.width = `${pct}%`;
+        document.getElementById('progressText').textContent = `あと ${next.min - state.growthPoints} ポイント`;
       } else {
         document.getElementById('progressBar').style.width = '100%';
-        document.getElementById('progressText').textContent = 'すごい！';
+        document.getElementById('levelBar').style.width = '100%';
+        document.getElementById('progressText').textContent = 'さいこうまで そだったよ！';
       }
 
+      buildRoadmap(stage.asset);
+      renderActivity(state);
+
+      const feedBtn = document.getElementById('feedBtn');
+      const playBtn = document.getElementById('playBtn');
+      feedBtn.disabled = eggMode;
+      playBtn.disabled = eggMode;
+      document.getElementById('feedHint').textContent = eggMode ? 'たまごのあいだはできません' : 'おいしくたべよう';
+      document.getElementById('playHint').textContent = eggMode ? 'たまごのあいだはできません' : 'いっしょにあそぼう';
+      document.getElementById('careHelp').textContent = eggMode
+        ? 'たまごのあいだは「ごはん」と「あそぶ」はできません。ようすをみたり、なでなでして見守ろう！'
+        : 'おせわをすると、きゅうきゅうザウルスがよろこぶよ！';
+
+      const params = new URLSearchParams(location.search);
       const gained = Number(params.get('gained') || 0);
       const notice = document.getElementById('recentNotice');
-      if (isTest) {
-        notice.innerHTML = '<div class="notice">🧪 テスト中：表示変更はまだ本番データに保存されていません。</div>';
-      } else if (gained > 0) {
-        notice.innerHTML = `<div class="notice">🌱 ${gained} せいちょうしたよ！ おせわも1回できるよ。</div>`;
-      } else if (state.careTokens > 0) {
-        notice.innerHTML = `<div class="notice">💚 おせわできるよ！ ${state.careTokens}回ぶん たまっているよ。</div>`;
-      } else {
-        notice.innerHTML = '';
-      }
+      if (isTest) notice.textContent = '🧪 テスト中：本番データはまだ変わっていません。';
+      else if (gained > 0) notice.textContent = `🌱 ${gained} せいちょうしたよ！`;
+      else notice.textContent = '';
 
-      const nameCard = document.getElementById('nameCard');
-      nameCard.hidden = state.growthPoints < 50;
+      document.getElementById('nameCard').hidden = state.growthPoints < 50;
       document.getElementById('dinoName').value = state.dinosaurName || '';
-      document.getElementById('careLink').href = isTest ? `care.html?test=1&points=${encodeURIComponent(state.growthPoints)}` : 'care.html';
-      syncTestInputs();
+      syncTestInputs(stage);
     }
 
-    function setupTestMode() {
-      if (!isTest) return;
-      document.getElementById('testBadge').hidden = false;
-      document.getElementById('testPanel').hidden = false;
-      document.getElementById('testModeLink').hidden = true;
-
-      const stageWrap = document.getElementById('stageChips');
+    function setupTestControls() {
+      const wrap = document.getElementById('stageChips');
       GameLogic.TEST_STAGES.forEach((item, index) => {
         const btn = document.createElement('button');
         btn.className = 'stage-chip';
         btn.type = 'button';
         btn.dataset.asset = item.asset;
-        btn.textContent = `${index}. ${item.label}`;
+        btn.title = item.label;
+        btn.innerHTML = `<span class="stage-chip-img dino-sprite"></span><small>${index}</small>`;
         btn.addEventListener('click', () => {
           previewState.growthPoints = item.points;
           previewScene = 'normal';
           render();
         });
-        stageWrap.appendChild(btn);
+        wrap.appendChild(btn);
+        GameAssets.show(btn.querySelector('.stage-chip-img'), item.asset);
       });
 
-      document.getElementById('testPoints').addEventListener('input', (event) => {
-        previewState.growthPoints = clampInt(event.target.value, 0, 2000);
+      document.getElementById('testPoints').addEventListener('input', e => {
+        previewState.growthPoints = clampInt(e.target.value, 0, 2000);
         previewScene = 'normal';
         render();
       });
-      document.getElementById('testWorksheets').addEventListener('input', (event) => {
-        previewState.worksheetsCompleted = clampInt(event.target.value, 0, 999);
+      document.getElementById('testTokens').addEventListener('input', e => {
+        previewState.careTokens = clampInt(e.target.value, 0, 999);
         render();
       });
-      document.getElementById('testTokens').addEventListener('input', (event) => {
-        previewState.careTokens = clampInt(event.target.value, 0, 999);
+      document.querySelectorAll('.scene-chip').forEach(btn => btn.addEventListener('click', () => {
+        previewScene = btn.dataset.scene;
         render();
-      });
-      document.querySelectorAll('.scene-chip').forEach(btn => {
-        btn.addEventListener('click', () => {
-          previewScene = btn.dataset.scene;
-          render();
-        });
-      });
+      }));
       document.getElementById('resetPreview').addEventListener('click', () => {
         previewState = clone(GameStore.getState());
         previewScene = 'normal';
         render();
       });
       document.getElementById('applyPreview').addEventListener('click', () => {
-        if (!confirm('テスト中の成長Pt・プリント枚数・おせわ回数を本番データに反映しますか？')) return;
+        if (!confirm('テスト中の成長Pt・おせわ回数を本番データに反映しますか？')) return;
         const actual = GameStore.getState();
-        GameStore.saveState({
-          ...actual,
-          growthPoints: clampInt(previewState.growthPoints, 0, 2000),
-          worksheetsCompleted: clampInt(previewState.worksheetsCompleted, 0, 999),
-          careTokens: clampInt(previewState.careTokens, 0, 999)
-        });
+        GameStore.saveState({...actual, growthPoints:clampInt(previewState.growthPoints,0,2000), careTokens:clampInt(previewState.careTokens,0,999)});
         previewState = clone(GameStore.getState());
         alert('本番データに反映しました。');
         render();
       });
     }
 
+    async function handleCare(type) {
+      const state = currentViewState();
+      const stage = GameLogic.stageForPoints(state.growthPoints);
+      if (isEggStage(stage) && (type === 'food' || type === 'play')) return;
+
+      if (isTest) {
+        previewScene = type;
+        render();
+        return;
+      }
+      const result = GameStore.useCare(type);
+      if (!result.success) {
+        document.getElementById('careHelp').textContent = '九九プリントをすると、おせわできる回数がふえるよ！';
+        return;
+      }
+      previewScene = 'normal';
+      const asset = GameLogic.ACTION_ASSETS[type];
+      if (asset && stage.asset === 'stage_05_small') {
+        await GameAssets.show(document.getElementById('creature'), asset);
+        setTimeout(() => render(), 1700);
+      } else {
+        render();
+      }
+    }
+
+    document.getElementById('normalModeBtn').addEventListener('click', () => setMode(false));
+    document.getElementById('testModeBtn').addEventListener('click', () => setMode(true));
+    document.getElementById('feedBtn').addEventListener('click', () => handleCare('food'));
+    document.getElementById('playBtn').addEventListener('click', () => handleCare('play'));
+    document.getElementById('petBtn').addEventListener('click', () => handleCare('pet'));
+    document.getElementById('observeBtn').addEventListener('click', () => {
+      const stage = GameLogic.stageForPoints(currentViewState().growthPoints);
+      document.getElementById('careHelp').textContent = `いまは「${stage.name}」。${stage.message}`;
+    });
     document.getElementById('saveName').addEventListener('click', () => {
       GameStore.setDinosaurName(document.getElementById('dinoName').value);
       if (isTest) previewState.dinosaurName = GameStore.getState().dinosaurName;
@@ -229,11 +391,14 @@
     document.getElementById('reset').addEventListener('click', () => {
       if (confirm('この端末の育成データを全部消します。よろしいですか？')) {
         GameStore.reset();
-        location.href = isTest ? 'index.html?test=1' : 'index.html';
+        previewState = clone(GameStore.getState());
+        render();
       }
     });
 
-    setupTestMode();
+    const now = new Date();
+    document.getElementById('todayLabel').textContent = `${now.getMonth()+1}月${now.getDate()}日`;
+    setupTestControls();
     render();
   </script>
 </body>
