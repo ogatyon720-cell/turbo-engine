@@ -1,47 +1,49 @@
-/* Visual balance pass based on the real 1920x1080 screenshot / ~700px browser viewport. */
+/* Final desktop balance pass based on the real browser viewport (~700px content height). */
 
 @media (min-width:1181px) {
   .game-body{
-    height:100svh !important;
+    height:100dvh !important;
     min-height:0 !important;
     overflow:hidden !important;
   }
   .game-app{
-    height:100svh !important;
+    height:100dvh !important;
     min-height:0 !important;
-    padding:6px 10px 7px !important;
+    padding:6px 10px !important;
     gap:6px !important;
+    overflow:hidden !important;
   }
   .game-header{
-    height:50px !important;
-    min-height:50px !important;
+    height:48px !important;
+    min-height:48px !important;
     border-radius:15px !important;
-    grid-template-columns:270px 1fr 205px !important;
+    grid-template-columns:270px 1fr 210px !important;
     padding:4px 9px !important;
   }
   .game-logo{font-size:21px !important}
   .logo-egg{font-size:27px !important}
   .nav-item{padding:6px 8px !important;font-size:12px !important}
-  .mode-switch{width:195px !important}
+  .mode-switch{width:200px !important}
   .mode-option{padding:5px 6px !important;font-size:11px !important}
 
   .dashboard-grid{
-    height:auto !important;
+    height:calc(100dvh - 60px) !important;
     min-height:0 !important;
-    flex:1 1 auto !important;
     align-items:stretch !important;
-    grid-template-columns:minmax(225px,26%) minmax(500px,1fr) minmax(275px,26%) !important;
+    grid-template-columns:minmax(220px,25.5%) minmax(520px,1fr) minmax(270px,26.5%) !important;
     gap:6px !important;
+    overflow:hidden !important;
   }
   .left-column,.center-column,.right-column{
     height:100% !important;
     min-height:0 !important;
     gap:5px !important;
+    overflow:hidden !important;
   }
   .dash-card,.hero-panel{border-radius:15px !important}
   .dash-card{padding:7px 9px !important}
 
-  /* LEFT: stop the history card from stretching into a large empty block. */
+  /* LEFT */
   .profile-card{flex:0 0 86px !important}
   .profile-top{gap:7px !important}
   .avatar{width:39px !important;height:39px !important;font-size:21px !important}
@@ -70,15 +72,15 @@
   .mini-stats strong{font-size:17px !important}
 
   .history-card{
-    flex:0 0 108px !important;
-    min-height:108px !important;
+    flex:0 0 105px !important;
+    min-height:105px !important;
     overflow:hidden !important;
   }
   .activity-list{margin-top:5px !important;gap:3px !important;font-size:9px !important}
   .activity-list>div{padding-bottom:3px !important}
   .activity-list>div:nth-child(n+3){display:none !important}
 
-  /* CENTER: use flex instead of grid so the scene takes only the remaining space. */
+  /* CENTER: prioritize the pet itself; keep progress visible at all times. */
   .hero-panel{
     height:100% !important;
     min-height:0 !important;
@@ -92,17 +94,17 @@
   .hero-panel h1{
     flex:0 0 auto !important;
     font-size:23px !important;
-    line-height:1.15 !important;
+    line-height:1.12 !important;
     margin:2px 0 1px !important;
   }
-  .dino-name{flex:0 0 auto !important;min-height:10px !important;font-size:9px !important}
+  .dino-name{flex:0 0 auto !important;min-height:9px !important;font-size:9px !important}
   .speech-bubble{
     flex:0 0 auto !important;
     align-self:flex-start !important;
-    max-width:230px !important;
+    max-width:225px !important;
     padding:5px 9px !important;
     font-size:10px !important;
-    line-height:1.3 !important;
+    line-height:1.25 !important;
     border-radius:13px !important;
     margin:0 !important;
   }
@@ -111,15 +113,21 @@
     height:auto !important;
     min-height:0 !important;
     max-height:none !important;
-    display:grid !important;
-    place-items:center !important;
+    display:flex !important;
+    align-items:flex-start !important;
+    justify-content:center !important;
     overflow:hidden !important;
-    margin:-3px 0 -5px !important;
+    padding-top:18px !important;
+    padding-bottom:0 !important;
+    margin:0 !important;
   }
   .stage-scene .dino-sprite{
-    width:min(245px,50%,35svh) !important;
-    max-width:245px !important;
-    max-height:245px !important;
+    width:210px !important;
+    height:210px !important;
+    max-width:42% !important;
+    max-height:210px !important;
+    flex:0 0 auto !important;
+    transform:translateY(-8px) !important;
   }
   .hero-notice{
     flex:0 0 12px !important;
@@ -139,47 +147,83 @@
   .progress{height:7px !important;margin-top:4px !important}
   .milestone-roadmap{margin-top:4px !important;gap:1px !important}
   .milestone{font-size:7px !important}
-  .milestone-img{width:31px !important}
-  .milestone-arrow{font-size:15px !important}
+  .milestone-img{width:29px !important}
+  .milestone-arrow{font-size:14px !important}
 
-  /* RIGHT: compact, balanced care card; test panel uses remaining room only when enabled. */
+  /* RIGHT */
   .right-column{justify-content:flex-start !important}
-  .care-card{flex:0 0 252px !important;padding:7px 8px !important}
+  .care-card{flex:0 0 220px !important;padding:7px 8px !important}
   .care-title{font-size:15px !important;padding:5px 8px !important;margin:-1px -1px 6px !important}
   .care-grid{gap:5px !important}
-  .care-tile{min-height:70px !important;padding:4px !important;border-radius:12px !important}
-  .care-tile .care-icon{font-size:21px !important}
+  .care-tile{min-height:64px !important;padding:4px !important;border-radius:12px !important}
+  .care-tile .care-icon{font-size:20px !important}
   .care-tile strong{font-size:11px !important}
   .care-tile small{font-size:7px !important}
-  .care-help{margin-top:5px !important;padding:5px 7px !important;font-size:7px !important;line-height:1.3 !important}
+  .care-help{display:none !important}
   .care-balance{font-size:7px !important;margin-top:3px !important}
 
+  /* Test mode stays inside the right column. Only this card may scroll. */
   .integrated-test{
-    flex:1 1 auto !important;
+    flex:0 1 215px !important;
     min-height:0 !important;
-    overflow:auto !important;
+    max-height:215px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
     padding:7px 8px !important;
   }
-  .name-card{flex:0 0 auto !important}
-
-  /* If test mode is open, allow page scrolling rather than clipping controls. */
-  .game-body:has(#testPanel:not([hidden])){
-    height:auto !important;
-    min-height:100svh !important;
-    overflow-y:auto !important;
-  }
-  .game-body:has(#testPanel:not([hidden])) .game-app{
-    height:auto !important;
-    min-height:100svh !important;
-  }
-  .game-body:has(#testPanel:not([hidden])) .dashboard-grid{
-    min-height:calc(100svh - 62px) !important;
-  }
+  .test-head{font-size:13px !important}
+  .test-live{font-size:9px !important;padding:3px 7px !important}
+  .integrated-test>p{font-size:7px !important;margin:2px 0 4px !important}
+  .test-control{margin-top:3px !important}
+  .test-control>label,.test-inline-grid label{font-size:7px !important}
+  .stage-thumb-row{gap:2px !important;margin-top:2px !important}
+  .stage-chip{padding:1px !important;border-radius:7px !important}
+  .stage-chip small{display:none !important}
+  .test-inline-grid{gap:4px !important;margin-top:3px !important}
+  .test-inline-grid input{padding:3px 5px !important;font-size:9px !important;margin-top:2px !important}
+  .scene-mini-row{gap:3px !important;margin-top:2px !important}
+  .scene-chip{padding:3px 5px !important;font-size:7px !important}
+  .test-actions-inline{gap:4px !important;margin-top:3px !important}
+  .test-actions-inline button{padding:4px !important;font-size:7px !important}
+  .name-card{flex:0 0 auto !important;padding:6px 8px !important}
+  .parent-tools{display:none !important}
 }
 
-/* Very short desktop windows: keep usable scrolling as a final safety net. */
+/* Short desktop viewports: compress the same layout rather than making the whole page scroll. */
+@media (min-width:1181px) and (max-height:740px){
+  .game-header{height:44px !important;min-height:44px !important}
+  .dashboard-grid{height:calc(100dvh - 56px) !important}
+  .game-logo{font-size:19px !important}
+  .logo-egg{font-size:24px !important}
+  .nav-item{padding:5px 7px !important;font-size:11px !important}
+  .mode-switch{width:190px !important}
+  .mode-option{padding:4px 6px !important;font-size:10px !important}
+
+  .profile-card{flex-basis:82px !important}
+  .study-card{flex-basis:174px !important}
+  .history-card{flex-basis:92px !important;min-height:92px !important}
+  .worksheet-cta{min-height:50px !important}
+  .mini-stats>div{min-height:50px !important}
+
+  .hero-panel h1{font-size:21px !important}
+  .speech-bubble{font-size:9px !important;padding:4px 8px !important}
+  .stage-scene{padding-top:10px !important}
+  .stage-scene .dino-sprite{
+    width:190px !important;
+    height:190px !important;
+    max-height:190px !important;
+    transform:translateY(-12px) !important;
+  }
+  .milestone-img{width:27px !important}
+
+  .care-card{flex-basis:205px !important}
+  .care-tile{min-height:59px !important}
+  .integrated-test{flex-basis:195px !important;max-height:195px !important}
+}
+
+/* Very short windows: retain access with a tiny internal right-panel scroll, never clip the whole page. */
 @media (min-width:1181px) and (max-height:620px){
-  .game-body{height:auto !important;overflow-y:auto !important}
-  .game-app{height:auto !important;min-height:620px !important}
-  .dashboard-grid{height:560px !important;min-height:560px !important}
+  .right-column{overflow-y:auto !important}
+  .stage-scene .dino-sprite{width:170px !important;height:170px !important;max-height:170px !important}
+  .history-card{display:none !important}
 }
