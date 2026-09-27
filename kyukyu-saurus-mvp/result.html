@@ -9,6 +9,11 @@
 <body>
   <main class="shell">
     <div class="brand">こたえあわせ 🦖</div>
+    <section class="card hero">
+      <div id="creature" class="creature dino-sprite" aria-label="きょうりゅう"></div>
+      <div id="stageName" class="stage-name"></div>
+      <p class="message">九九をがんばったぶん、きょうりゅうが そだつよ！</p>
+    </section>
     <section class="card">
       <div id="duplicate" class="notice" hidden>このプリントは、もう成長に登録してあるよ。</div>
       <form id="resultForm">
@@ -29,9 +34,14 @@
   </main>
   <script src="logic.js"></script>
   <script src="store.js"></script>
+  <script src="assets.js"></script>
   <script>
     const wid = new URLSearchParams(location.search).get('wid') || '';
     const state = GameStore.getState();
+    const stage = GameLogic.stageForPoints(state.growthPoints);
+    GameAssets.show(document.getElementById('creature'), stage.asset);
+    document.getElementById('stageName').textContent = state.dinosaurName || stage.name;
+
     const already = wid && state.completedWorksheetIds.includes(wid);
     if (!wid || already) {
       document.getElementById('duplicate').hidden = false;
