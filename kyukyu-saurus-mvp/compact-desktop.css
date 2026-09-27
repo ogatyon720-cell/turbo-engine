@@ -1,0 +1,179 @@
+/* Compact desktop tuning for real browser viewports (~700px content height). */
+
+@media (min-width:1181px) {
+  .game-body {
+    height:auto;
+    min-height:100svh;
+    overflow-y:auto;
+  }
+
+  .game-app {
+    height:100svh;
+    min-height:680px;
+    padding:8px 12px 8px;
+    gap:8px;
+    max-width:1640px;
+  }
+
+  .game-header {
+    min-height:54px;
+    height:54px;
+    border-radius:18px;
+    grid-template-columns:285px 1fr 220px;
+    padding:5px 10px;
+    gap:8px;
+  }
+
+  .game-logo { font-size:23px; gap:7px; }
+  .logo-egg { font-size:30px; }
+  .game-nav { gap:3px; }
+  .nav-item { padding:7px 10px; border-radius:12px; font-size:14px; }
+  .mode-switch { width:210px; padding:3px; }
+  .mode-option { padding:7px 8px; font-size:13px; }
+
+  .dashboard-grid {
+    min-height:0;
+    height:calc(100svh - 70px);
+    grid-template-columns:minmax(250px,29%) minmax(460px,1fr) minmax(315px,29%);
+    gap:8px;
+  }
+
+  .left-column,.right-column,.center-column { gap:7px; min-height:0; }
+  .dash-card,.hero-panel { border-radius:18px; }
+  .dash-card { padding:10px 12px; }
+
+  /* left */
+  .profile-card { flex:0 0 105px; }
+  .profile-top { gap:9px; }
+  .avatar { width:48px; height:48px; font-size:26px; border-width:3px; }
+  .profile-name { font-size:16px; margin-bottom:2px; }
+  .grade-pill { padding:3px 8px; font-size:10px; }
+  .mini-level-row { margin-top:5px; font-size:10px; }
+  .mini-level-row strong { font-size:15px; }
+  .mini-progress { height:7px; margin-top:4px; }
+
+  .study-card { flex:0 0 222px; }
+  .section-head.compact { font-size:13px; }
+  .muted-small { font-size:9px; }
+  .worksheet-cta {
+    margin-top:7px;
+    min-height:66px;
+    padding:8px 10px;
+    border-radius:15px;
+    grid-template-columns:40px 1fr 16px;
+    gap:7px;
+  }
+  .worksheet-icon { font-size:30px; }
+  .worksheet-cta small { font-size:10px; }
+  .worksheet-cta strong { font-size:18px; }
+  .cta-arrow { font-size:28px; }
+  .mini-stats { gap:5px; margin-top:7px; }
+  .mini-stats>div { min-height:66px; padding:5px 3px; border-radius:12px; }
+  .mini-stats span { font-size:14px; }
+  .mini-stats small { font-size:8px; }
+  .mini-stats strong { font-size:19px; margin-top:2px; }
+  .mini-stats em { font-size:8px; }
+
+  .history-card { flex:1 1 auto; min-height:95px; padding-bottom:7px; }
+  .activity-list { gap:3px; margin-top:6px; font-size:10px; }
+  .activity-list>div { padding-bottom:3px; }
+  .activity-list>div:nth-child(n+4) { display:none; }
+
+  /* center: seven explicit rows; speech must NOT consume the scene row */
+  .hero-panel {
+    grid-template-rows:auto auto auto auto minmax(150px,1fr) auto auto;
+    padding:8px 14px 9px;
+    min-height:0;
+  }
+  .current-pill { padding:5px 10px; font-size:10px; }
+  .hero-panel h1 { font-size:clamp(20px,2vw,30px); margin:2px 0 0; }
+  .dino-name { font-size:10px; min-height:12px; }
+  .speech-bubble {
+    align-self:start;
+    justify-self:start;
+    max-width:250px;
+    min-height:0;
+    padding:6px 10px;
+    border-radius:15px;
+    font-size:11px;
+    margin-top:0;
+  }
+  .stage-scene { min-height:0; overflow:hidden; }
+  .stage-scene .dino-sprite { width:min(300px,58%); max-height:290px; }
+  .hero-notice { min-height:14px; font-size:9px; }
+  .growth-panel { border-radius:14px; padding:6px 10px; }
+  .growth-label-row { font-size:10px; }
+  .growth-label-row>span { padding:4px 8px; }
+  .growth-label-row strong { font-size:13px; }
+  .progress { height:8px; margin-top:5px; }
+  .milestone-roadmap { gap:2px; margin-top:5px; }
+  .milestone { font-size:8px; }
+  .milestone-img { width:40px; }
+  .milestone-arrow { font-size:18px; }
+
+  /* right */
+  .care-card { padding:9px 10px 8px; }
+  .care-title { border-radius:13px; padding:6px 10px; font-size:17px; margin:-2px -2px 7px; }
+  .care-grid { gap:6px; }
+  .care-tile { min-height:74px; border-radius:14px; padding:5px; }
+  .care-tile .care-icon { font-size:24px; }
+  .care-tile strong { font-size:12px; }
+  .care-tile small { font-size:8px; }
+  .care-tile:disabled::after { right:6px; top:4px; font-size:12px; }
+  .care-help { margin-top:6px; border-radius:11px; padding:6px 8px; font-size:8px; }
+  .care-balance { font-size:8px; margin-top:4px; }
+
+  .integrated-test { padding:8px 9px; overflow:auto; }
+  .test-head { font-size:13px; }
+  .test-live { font-size:9px; padding:3px 7px; }
+  .integrated-test>p { font-size:8px; margin:3px 0 4px; }
+  .test-control { margin-top:4px; }
+  .stage-thumb-row { margin-top:2px; gap:2px; }
+  .stage-chip small { display:none; }
+  .test-inline-grid { gap:5px; margin-top:4px; }
+  .test-inline-grid input { padding:4px 6px; font-size:10px; }
+  .scene-chip { padding:4px 6px; font-size:7px; }
+  .test-actions-inline { margin-top:4px; gap:4px; }
+  .test-actions-inline button { padding:5px; font-size:8px; }
+  .name-card { padding:7px 10px; }
+
+  /* Test mode can need more vertical space; allow the page to scroll rather than clip. */
+  .game-body.test-active .game-app { height:auto; min-height:100svh; }
+  .game-body.test-active .dashboard-grid { height:auto; min-height:calc(100svh - 70px); }
+}
+
+/* Extra compression for the exact kind of browser viewport seen in the screenshot. */
+@media (min-width:1181px) and (max-height:760px) {
+  .game-app { min-height:650px; padding:6px 10px; gap:6px; }
+  .game-header { min-height:48px; height:48px; border-radius:16px; }
+  .game-logo { font-size:21px; }
+  .logo-egg { font-size:27px; }
+  .nav-item { padding:6px 8px; font-size:12px; }
+  .mode-switch { width:195px; }
+  .mode-option { padding:6px 7px; font-size:12px; }
+  .dashboard-grid { height:calc(100svh - 60px); gap:6px; }
+  .left-column,.right-column,.center-column { gap:5px; }
+  .profile-card { flex-basis:92px; }
+  .avatar { width:42px; height:42px; font-size:22px; }
+  .profile-name { font-size:14px; }
+  .mini-level-row { margin-top:3px; }
+  .study-card { flex-basis:202px; }
+  .worksheet-cta { min-height:58px; }
+  .worksheet-cta strong { font-size:16px; }
+  .mini-stats>div { min-height:60px; }
+  .history-card { min-height:82px; }
+  .activity-list>div:nth-child(n+3) { display:none; }
+  .hero-panel { grid-template-rows:auto auto auto auto minmax(135px,1fr) auto auto; padding:6px 12px; }
+  .hero-panel h1 { font-size:24px; }
+  .stage-scene .dino-sprite { width:min(260px,52%); max-height:250px; }
+  .milestone-img { width:34px; }
+  .care-tile { min-height:66px; }
+  .care-tile .care-icon { font-size:21px; }
+  .care-title { font-size:15px; }
+}
+
+/* Safety net: if the browser viewport is even shorter, scrolling is mandatory. */
+@media (min-width:1181px) and (max-height:640px) {
+  .game-app { height:auto; min-height:650px; }
+  .dashboard-grid { height:590px; min-height:590px; }
+}
