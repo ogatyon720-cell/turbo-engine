@@ -51,8 +51,47 @@
     return dataUrlPromise;
   }
 
-  async function show(element, key) {
+  function mainCreatureStage() {
+    let points = 0;
+    try {
+      if (typeof isTest !== 'undefined' && isTest && typeof previewState !== 'undefined') {
+        points = Number(previewState.growthPoints) || 0;
+      } else if (global.GameStore) {
+        points = Number(global.GameStore.getState().growthPoints) || 0;
+      }
+    } catch (_) {
+      points = global.GameStore ? Number(global.GameStore.getState().growthPoints) || 0 : 0;
+    }
+    return global.GameLogic ? global.GameLogic.stageForPoints(points) : { asset: 'stage_00_egg' };
+  }
+
+  function updateReactionPreviewControls(stage) {
+    if (typeof document === 'undefined') return;
+    const allow = stage && stage.asset === 'stage_05_small';
+    document.querySelectorAll('#sceneChips .scene-chip').forEach((button) => {
+      if (button.dataset.scene === 'normal') return;
+      button.disabled = !allow;
+      button.title = allow ? '' : 'リアクション差分は「ちび恐竜」で確認できます';
+      button.style.opacity = allow ? '1' : '.38';
+      button.style.cursor = allow ? 'pointer' : 'not-allowed';
+    });
+  }
+
+  async function show(element, requestedKey) {
     if (!element) return;
+
+    let key = requestedKey;
+    if (element.id === 'creature') {
+      const stage = mainCreatureStage();
+      updateReactionPreviewControls(stage);
+
+      // Current care reaction artwork was created specifically for stage_05_small.
+      // Never show that artwork on eggs, babies, juveniles, or grown dinosaurs.
+      if (String(key).startsWith('action_') && stage.asset !== 'stage_05_small') {
+        key = stage.asset;
+      }
+    }
+
     const [x, y] = CELLS[key] || CELLS.stage_00_egg;
     const url = await load();
     element.classList.add('dino-sprite');
