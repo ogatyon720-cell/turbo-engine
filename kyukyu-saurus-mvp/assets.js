@@ -1,10 +1,19 @@
 (function (global) {
-  if (typeof document !== 'undefined' && !document.querySelector('link[data-desktop-fix]')) {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'desktop-fix.css';
-    link.dataset.desktopFix = '1';
-    document.head.appendChild(link);
+  if (typeof document !== 'undefined') {
+    if (!document.querySelector('link[data-desktop-fix]')) {
+      const fix = document.createElement('link');
+      fix.rel = 'stylesheet';
+      fix.href = 'desktop-fix.css';
+      fix.dataset.desktopFix = '1';
+      document.head.appendChild(fix);
+    }
+    if (!document.querySelector('link[data-compact-desktop]')) {
+      const compact = document.createElement('link');
+      compact.rel = 'stylesheet';
+      compact.href = 'compact-desktop.css?v=3';
+      compact.dataset.compactDesktop = '1';
+      document.head.appendChild(compact);
+    }
   }
 
   const PARTS = Array.from({ length: 8 }, (_, i) => `assets/sprite/part0${i}.txt`);
