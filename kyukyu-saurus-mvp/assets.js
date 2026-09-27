@@ -85,10 +85,20 @@
       const stage = mainCreatureStage();
       updateReactionPreviewControls(stage);
 
-      // Current care reaction artwork was created specifically for stage_05_small.
-      // Never show that artwork on eggs, babies, juveniles, or grown dinosaurs.
-      if (String(key).startsWith('action_') && stage.asset !== 'stage_05_small') {
+      const isActionAsset = String(key).startsWith('action_');
+      if (isActionAsset && stage.asset !== 'stage_05_small') {
+        // The current reaction artwork belongs only to the small dinosaur.
+        // Fall back completely to the current stage rather than mixing ages.
         key = stage.asset;
+        try {
+          if (typeof previewScene !== 'undefined') previewScene = 'normal';
+        } catch (_) {}
+      } else if (stage.asset === 'stage_05_small' && key === 'action_feed') {
+        // UI care type is "food" while the artwork/test scene name is "feed".
+        // Normalize it so the test title and active chip stay consistent too.
+        try {
+          if (typeof previewScene !== 'undefined' && previewScene === 'food') previewScene = 'feed';
+        } catch (_) {}
       }
     }
 
