@@ -21,6 +21,13 @@
       balance.dataset.balanceFix = '1';
       document.head.appendChild(balance);
     }
+    global.addEventListener('load', () => {
+      if (document.querySelector('script[data-interaction-fix]')) return;
+      const script = document.createElement('script');
+      script.src = 'interaction-fix.js?v=1';
+      script.dataset.interactionFix = '1';
+      document.body.appendChild(script);
+    }, { once: true });
   }
 
   const PARTS = Array.from({ length: 8 }, (_, i) => `assets/sprite/part0${i}.txt`);
@@ -87,8 +94,6 @@
 
       const isActionAsset = String(key).startsWith('action_');
       if (isActionAsset && stage.asset !== 'stage_04_baby') {
-        // The current care artwork visually matches the baby stage.
-        // Never mix this artwork into other growth stages.
         key = stage.asset;
         try {
           if (typeof previewScene !== 'undefined') previewScene = 'normal';
