@@ -51,11 +51,11 @@
     facts.forEach((f, i) => {
       const p = document.createElement('div');
       p.className = 'problem';
-      p.textContent = `${String(i + 1).padStart(2, ' ')}.  ${f.a} × ${f.b} = ______`;
+      p.textContent = `(${i + 1})  ${f.a} × ${f.b} = ______`;
       problems.appendChild(p);
       const a = document.createElement('div');
       a.className = 'answer-item';
-      a.textContent = `${i + 1}. ${f.a} × ${f.b} = ${f.answer}`;
+      a.textContent = `(${i + 1}) ${f.a} × ${f.b} = ${f.answer}`;
       answers.appendChild(a);
     });
 
