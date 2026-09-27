@@ -5,7 +5,7 @@
     worksheetsCompleted: 0,
     completedWorksheetIds: [],
     careTokens: 0,
-    careCounts: { food: 0, pet: 0, play: 0 },
+    careCounts: { food: 0, pet: 0, play: 0, sleep: 0 },
     dinosaurName: '',
     lastResult: null,
     lastCare: null,
@@ -45,7 +45,7 @@
     return { duplicate: false, state: next, addedPoints };
   }
   function useCare(type) {
-    const allowed = ['food', 'pet', 'play'];
+    const allowed = ['food', 'pet', 'play', 'sleep'];
     if (!allowed.includes(type)) throw new Error('invalid care type');
     const state = getState();
     if (state.careTokens <= 0) return { success: false, state };
