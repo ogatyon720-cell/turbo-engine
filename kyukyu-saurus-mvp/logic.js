@@ -24,6 +24,7 @@
 
   const ACTION_ASSETS = {
     feed: 'action_feed',
+    food: 'action_feed',
     pet: 'action_pet',
     play: 'action_play',
     sleep: 'action_sleep'
