@@ -10,11 +10,12 @@
   <main class="shell">
     <div class="brand">きゅうきゅうザウルス</div>
     <div class="subbrand">九九をがんばると、きょうりゅうが そだつよ</div>
+    <div id="testBadge" class="test-badge" hidden>🧪 テストモード</div>
 
     <section class="card hero">
-      <div id="creature" class="creature" aria-label="きょうりゅう">🥚</div>
+      <div id="creature" class="creature dino-sprite" aria-label="きょうりゅう"></div>
       <div id="stageName" class="stage-name">ふしぎな たまご</div>
-      <div id="dinoNameLine" style="font-weight:900"></div>
+      <div id="dinoNameLine" style="font-weight:900;position:relative;z-index:1"></div>
       <p id="stageMessage" class="message">なかに だれか いるのかな？</p>
       <div id="recentNotice"></div>
 
@@ -30,7 +31,45 @@
       </div>
 
       <a class="primary" href="worksheet.html">✏️ きょうの九九プリントをつくる</a>
-      <a class="secondary" href="care.html">💚 きょうりゅうを おせわする</a>
+      <a id="careLink" class="secondary" href="care.html">💚 きょうりゅうを おせわする</a>
+    </section>
+
+    <section id="testPanel" class="card test-panel" hidden>
+      <h2>🧪 テストプレイ操作</h2>
+      <div class="test-note">ここで変えた値はプレビューだけです。「本番データに反映」を押すまで、娘さんの育成データは変わりません。</div>
+
+      <div class="test-section-title">成長ステージを直接見る</div>
+      <div id="stageChips" class="stage-chips"></div>
+
+      <div class="test-grid">
+        <div class="field">
+          <label for="testPoints">成長Pt</label>
+          <input id="testPoints" type="number" min="0" max="2000" step="1" />
+        </div>
+        <div class="field">
+          <label for="testWorksheets">プリント枚数</label>
+          <input id="testWorksheets" type="number" min="0" max="999" step="1" />
+        </div>
+        <div class="field">
+          <label for="testTokens">おせわ回数</label>
+          <input id="testTokens" type="number" min="0" max="999" step="1" />
+        </div>
+      </div>
+
+      <div class="test-section-title">表示シーンを強制切替</div>
+      <div id="sceneChips" class="scene-chips">
+        <button class="scene-chip active" data-scene="normal">通常</button>
+        <button class="scene-chip" data-scene="feed">🍖 ごはん</button>
+        <button class="scene-chip" data-scene="pet">💕 なでなで</button>
+        <button class="scene-chip" data-scene="play">⚽ あそぶ</button>
+        <button class="scene-chip" data-scene="sleep">💤 ねる</button>
+      </div>
+
+      <div class="test-actions">
+        <button id="resetPreview" class="test-btn ghost">現在の本番値に戻す</button>
+        <button id="applyPreview" class="test-btn">本番データに反映</button>
+      </div>
+      <a class="secondary" href="index.html">テストモードを終了</a>
     </section>
 
     <section id="nameCard" class="card" hidden>
@@ -47,20 +86,45 @@
         <summary>おうちの人へ</summary>
         <p class="small">このMVPはデータをこの端末のブラウザ内に保存します。プリントはPCで作成しても構いませんが、採点QRは毎回同じスマホで読み取ると、恐竜の成長が1か所にまとまります。</p>
         <p class="small">採点：0〜24問=10pt、25〜27問=11pt、28〜29問=13pt、30問=15pt。プリント1枚につき「おせわ」1回が追加されます。</p>
-        <button id="reset" class="danger">この端末の育成データをリセット</button>
+        <a id="testModeLink" class="secondary" href="index.html?test=1">🧪 テストモードを開く</a>
+        <button id="reset" class="danger" style="margin-top:14px">この端末の育成データをリセット</button>
       </details>
     </section>
   </main>
   <script src="logic.js"></script>
   <script src="store.js"></script>
+  <script src="assets.js"></script>
   <script>
-    function render() {
-      const state = GameStore.getState();
+    const params = new URLSearchParams(location.search);
+    const isTest = params.get('test') === '1';
+    const clone = (value) => JSON.parse(JSON.stringify(value));
+    const clampInt = (value, min, max) => Math.min(max, Math.max(min, Math.round(Number(value) || 0)));
+    let previewState = clone(GameStore.getState());
+    let previewScene = 'normal';
+
+    function currentViewState() {
+      return isTest ? previewState : GameStore.getState();
+    }
+
+    function syncTestInputs() {
+      if (!isTest) return;
+      document.getElementById('testPoints').value = previewState.growthPoints;
+      document.getElementById('testWorksheets').value = previewState.worksheetsCompleted;
+      document.getElementById('testTokens').value = previewState.careTokens;
+      const activeAsset = GameLogic.stageForPoints(previewState.growthPoints).asset;
+      document.querySelectorAll('.stage-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.asset === activeAsset));
+      document.querySelectorAll('.scene-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.scene === previewScene));
+    }
+
+    async function render() {
+      const state = currentViewState();
       const stage = GameLogic.stageForPoints(state.growthPoints);
       const next = GameLogic.nextStageForPoints(state.growthPoints);
-      document.getElementById('creature').textContent = stage.icon;
-      document.getElementById('stageName').textContent = stage.name;
-      document.getElementById('stageMessage').textContent = stage.message;
+      const asset = previewScene === 'normal' ? stage.asset : GameLogic.ACTION_ASSETS[previewScene];
+      await GameAssets.show(document.getElementById('creature'), asset);
+
+      document.getElementById('stageName').textContent = previewScene === 'normal' ? stage.name : `テスト：${({feed:'ごはん',pet:'なでなで',play:'あそぶ',sleep:'ねる'})[previewScene]}`;
+      document.getElementById('stageMessage').textContent = previewScene === 'normal' ? stage.message : 'おせわリアクションをプレビューしています。';
       document.getElementById('worksheets').textContent = state.worksheetsCompleted;
       document.getElementById('points').textContent = state.growthPoints;
       document.getElementById('careTokens').textContent = state.careTokens;
@@ -78,29 +142,98 @@
         document.getElementById('progressText').textContent = 'すごい！';
       }
 
-      const params = new URLSearchParams(location.search);
       const gained = Number(params.get('gained') || 0);
-      if (gained > 0) {
-        document.getElementById('recentNotice').innerHTML = `<div class="notice">🌱 ${gained} せいちょうしたよ！ おせわも1回できるよ。</div>`;
+      const notice = document.getElementById('recentNotice');
+      if (isTest) {
+        notice.innerHTML = '<div class="notice">🧪 テスト中：表示変更はまだ本番データに保存されていません。</div>';
+      } else if (gained > 0) {
+        notice.innerHTML = `<div class="notice">🌱 ${gained} せいちょうしたよ！ おせわも1回できるよ。</div>`;
       } else if (state.careTokens > 0) {
-        document.getElementById('recentNotice').innerHTML = `<div class="notice">💚 おせわできるよ！ ${state.careTokens}回ぶん たまっているよ。</div>`;
+        notice.innerHTML = `<div class="notice">💚 おせわできるよ！ ${state.careTokens}回ぶん たまっているよ。</div>`;
+      } else {
+        notice.innerHTML = '';
       }
 
       const nameCard = document.getElementById('nameCard');
       nameCard.hidden = state.growthPoints < 50;
       document.getElementById('dinoName').value = state.dinosaurName || '';
+      document.getElementById('careLink').href = isTest ? `care.html?test=1&points=${encodeURIComponent(state.growthPoints)}` : 'care.html';
+      syncTestInputs();
+    }
+
+    function setupTestMode() {
+      if (!isTest) return;
+      document.getElementById('testBadge').hidden = false;
+      document.getElementById('testPanel').hidden = false;
+      document.getElementById('testModeLink').hidden = true;
+
+      const stageWrap = document.getElementById('stageChips');
+      GameLogic.TEST_STAGES.forEach((item, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'stage-chip';
+        btn.type = 'button';
+        btn.dataset.asset = item.asset;
+        btn.textContent = `${index}. ${item.label}`;
+        btn.addEventListener('click', () => {
+          previewState.growthPoints = item.points;
+          previewScene = 'normal';
+          render();
+        });
+        stageWrap.appendChild(btn);
+      });
+
+      document.getElementById('testPoints').addEventListener('input', (event) => {
+        previewState.growthPoints = clampInt(event.target.value, 0, 2000);
+        previewScene = 'normal';
+        render();
+      });
+      document.getElementById('testWorksheets').addEventListener('input', (event) => {
+        previewState.worksheetsCompleted = clampInt(event.target.value, 0, 999);
+        render();
+      });
+      document.getElementById('testTokens').addEventListener('input', (event) => {
+        previewState.careTokens = clampInt(event.target.value, 0, 999);
+        render();
+      });
+      document.querySelectorAll('.scene-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          previewScene = btn.dataset.scene;
+          render();
+        });
+      });
+      document.getElementById('resetPreview').addEventListener('click', () => {
+        previewState = clone(GameStore.getState());
+        previewScene = 'normal';
+        render();
+      });
+      document.getElementById('applyPreview').addEventListener('click', () => {
+        if (!confirm('テスト中の成長Pt・プリント枚数・おせわ回数を本番データに反映しますか？')) return;
+        const actual = GameStore.getState();
+        GameStore.saveState({
+          ...actual,
+          growthPoints: clampInt(previewState.growthPoints, 0, 2000),
+          worksheetsCompleted: clampInt(previewState.worksheetsCompleted, 0, 999),
+          careTokens: clampInt(previewState.careTokens, 0, 999)
+        });
+        previewState = clone(GameStore.getState());
+        alert('本番データに反映しました。');
+        render();
+      });
     }
 
     document.getElementById('saveName').addEventListener('click', () => {
       GameStore.setDinosaurName(document.getElementById('dinoName').value);
+      if (isTest) previewState.dinosaurName = GameStore.getState().dinosaurName;
       render();
     });
     document.getElementById('reset').addEventListener('click', () => {
       if (confirm('この端末の育成データを全部消します。よろしいですか？')) {
         GameStore.reset();
-        location.href = 'index.html';
+        location.href = isTest ? 'index.html?test=1' : 'index.html';
       }
     });
+
+    setupTestMode();
     render();
   </script>
 </body>
