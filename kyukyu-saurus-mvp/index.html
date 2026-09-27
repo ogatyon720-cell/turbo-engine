@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>きゅうきゅうザウルス</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <div class="brand">きゅうきゅうザウルス</div>
+    <div class="subbrand">九九をがんばると、きょうりゅうが そだつよ</div>
+
+    <section class="card hero">
+      <div id="creature" class="creature" aria-label="きょうりゅう">🥚</div>
+      <div id="stageName" class="stage-name">ふしぎな たまご</div>
+      <div id="dinoNameLine" style="font-weight:900"></div>
+      <p id="stageMessage" class="message">なかに だれか いるのかな？</p>
+      <div id="recentNotice"></div>
+
+      <div class="progress-wrap">
+        <div class="progress-label"><span>つぎの へんかまで</span><span id="progressText"></span></div>
+        <div class="progress"><div id="progressBar" style="width:0%"></div></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong id="worksheets">0</strong><span>プリント</span></div>
+        <div class="stat"><strong id="points">0</strong><span>せいちょう</span></div>
+        <div class="stat"><strong id="careTokens">0</strong><span>おせわ</span></div>
+      </div>
+
+      <a class="primary" href="worksheet.html">✏️ きょうの九九プリントをつくる</a>
+      <a class="secondary" href="care.html">💚 きょうりゅうを おせわする</a>
+    </section>
+
+    <section id="nameCard" class="card" hidden>
+      <h2 style="margin-top:0">なまえを つけよう！</h2>
+      <p class="small">たまごから うまれたら、きょうりゅうに好きな名前をつけられます。</p>
+      <div class="form-row">
+        <div class="field"><label for="dinoName">きょうりゅうの なまえ</label><input id="dinoName" type="text" maxlength="20" /></div>
+        <button id="saveName" class="primary" style="width:auto;margin:0;box-shadow:none">きめる</button>
+      </div>
+    </section>
+
+    <section class="card parent-box">
+      <details>
+        <summary>おうちの人へ</summary>
+        <p class="small">このMVPはデータをこの端末のブラウザ内に保存します。プリントはPCで作成しても構いませんが、採点QRは毎回同じスマホで読み取ると、恐竜の成長が1か所にまとまります。</p>
+        <p class="small">採点：0〜24問=10pt、25〜27問=11pt、28〜29問=13pt、30問=15pt。プリント1枚につき「おせわ」1回が追加されます。</p>
+        <button id="reset" class="danger">この端末の育成データをリセット</button>
+      </details>
+    </section>
+  </main>
+  <script src="logic.js"></script>
+  <script src="store.js"></script>
+  <script>
+    function render() {
+      const state = GameStore.getState();
+      const stage = GameLogic.stageForPoints(state.growthPoints);
+      const next = GameLogic.nextStageForPoints(state.growthPoints);
+      document.getElementById('creature').textContent = stage.icon;
+      document.getElementById('stageName').textContent = stage.name;
+      document.getElementById('stageMessage').textContent = stage.message;
+      document.getElementById('worksheets').textContent = state.worksheetsCompleted;
+      document.getElementById('points').textContent = state.growthPoints;
+      document.getElementById('careTokens').textContent = state.careTokens;
+      document.getElementById('dinoNameLine').textContent = state.dinosaurName ? `「${state.dinosaurName}」` : '';
+
+      if (next) {
+        const currentMin = stage.min;
+        const span = Math.max(1, next.min - currentMin);
+        const current = Math.max(0, state.growthPoints - currentMin);
+        const pct = Math.min(100, Math.round((current / span) * 100));
+        document.getElementById('progressBar').style.width = `${pct}%`;
+        document.getElementById('progressText').textContent = `あと ${next.min - state.growthPoints}`;
+      } else {
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('progressText').textContent = 'すごい！';
+      }
+
+      const params = new URLSearchParams(location.search);
+      const gained = Number(params.get('gained') || 0);
+      if (gained > 0) {
+        document.getElementById('recentNotice').innerHTML = `<div class="notice">🌱 ${gained} せいちょうしたよ！ おせわも1回できるよ。</div>`;
+      } else if (state.careTokens > 0) {
+        document.getElementById('recentNotice').innerHTML = `<div class="notice">💚 おせわできるよ！ ${state.careTokens}回ぶん たまっているよ。</div>`;
+      }
+
+      const nameCard = document.getElementById('nameCard');
+      nameCard.hidden = state.growthPoints < 50;
+      document.getElementById('dinoName').value = state.dinosaurName || '';
+    }
+
+    document.getElementById('saveName').addEventListener('click', () => {
+      GameStore.setDinosaurName(document.getElementById('dinoName').value);
+      render();
+    });
+    document.getElementById('reset').addEventListener('click', () => {
+      if (confirm('この端末の育成データを全部消します。よろしいですか？')) {
+        GameStore.reset();
+        location.href = 'index.html';
+      }
+    });
+    render();
+  </script>
+</body>
+</html>
