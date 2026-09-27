@@ -14,6 +14,13 @@
       compact.dataset.compactDesktop = '1';
       document.head.appendChild(compact);
     }
+    if (!document.querySelector('link[data-balance-fix]')) {
+      const balance = document.createElement('link');
+      balance.rel = 'stylesheet';
+      balance.href = 'balance-fix.css?v=1';
+      balance.dataset.balanceFix = '1';
+      document.head.appendChild(balance);
+    }
   }
 
   const PARTS = Array.from({ length: 8 }, (_, i) => `assets/sprite/part0${i}.txt`);
