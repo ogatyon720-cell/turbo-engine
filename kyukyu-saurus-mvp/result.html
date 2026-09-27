@@ -5,48 +5,139 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>こたえあわせ | きゅうきゅうザウルス</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    .result-page{min-height:100vh;background:linear-gradient(180deg,#eaf9ff 0%,#fff8e9 54%,#ffe9f2 100%);color:#4b3030;padding:18px 12px 30px}
+    .result-wrap{width:min(680px,100%);margin:0 auto}
+    .result-logo{text-align:center;font-weight:1000;font-size:clamp(22px,5vw,32px);margin:3px 0 14px;letter-spacing:.04em}
+    .result-card{background:rgba(255,255,255,.95);border:2px solid rgba(255,255,255,.86);border-radius:26px;box-shadow:0 15px 40px rgba(111,67,67,.12);padding:20px;margin-top:12px}
+    .result-hero{text-align:center;padding-bottom:16px}
+    .result-creature{width:180px;height:180px;margin:0 auto -2px}
+    .result-stage{font-size:20px;font-weight:1000;margin-top:4px}
+    .result-message{font-size:13px;font-weight:800;color:#795f5a;margin:6px 0 0}
+    .result-form .field{margin-top:12px}.result-form .field:first-child{margin-top:0}
+    .result-form label{font-size:14px}
+    .result-form input{width:100%;box-sizing:border-box}
+    .reward-preview{background:#fff3c8;border:1px solid #ffe19a;border-radius:16px;padding:11px 13px;margin-top:14px;font-size:13px;font-weight:900;line-height:1.55}
+    .reward-submit{background:linear-gradient(180deg,#ff6598,#ef3e78);box-shadow:0 7px 0 #c92e61;margin-top:14px}
+    .reward-screen[hidden],.entry-screen[hidden]{display:none!important}
+    .reward-head{text-align:center}
+    .reward-kicker{display:inline-flex;align-items:center;gap:5px;background:#ffe0ec;color:#a83360;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:1000}
+    .reward-score{font-size:clamp(42px,12vw,68px);font-weight:1000;line-height:1;margin:12px 0 3px;color:#ef3f7b}
+    .reward-score small{font-size:.34em;color:#6e5550;margin-left:4px}
+    .reward-cheer{font-size:16px;font-weight:1000;margin-bottom:14px}
+    .reward-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}
+    .reward-box{background:#fff8f2;border:1px solid #f4ded5;border-radius:16px;padding:10px 5px;text-align:center}
+    .reward-box span{display:block;font-size:9px;font-weight:900;color:#846c65;min-height:24px}
+    .reward-box strong{display:block;font-size:24px;color:#4b3030;margin-top:2px}.reward-box em{font-size:10px;font-style:normal;color:#8a7068}
+    .reward-total{background:linear-gradient(135deg,#fff1a8,#ffd4e4);border:2px solid #fff;border-radius:20px;padding:14px;text-align:center;margin:10px 0;box-shadow:0 7px 20px rgba(238,117,151,.15)}
+    .reward-total span{display:block;font-size:11px;font-weight:900}.reward-total strong{display:block;font-size:38px;line-height:1.15;color:#ef3f7b}.reward-total strong small{font-size:15px}
+    .care-earned{display:flex;align-items:center;justify-content:center;gap:8px;background:#efffee;border:1px solid #cdebc9;border-radius:16px;padding:10px;margin-top:9px;font-size:13px;font-weight:1000;color:#3f7141}
+    .evolution-card{margin-top:14px;border-radius:24px;padding:16px;background:radial-gradient(circle at 50% 38%,#fffbd5,#ffe0ee 58%,#dfedff);border:2px solid #fff;box-shadow:0 10px 30px rgba(173,102,144,.18);text-align:center;overflow:hidden;position:relative}
+    .evolution-card::before,.evolution-card::after{content:'✦';position:absolute;color:#ff77aa;font-size:24px;animation:twinkle 1.3s ease-in-out infinite alternate}.evolution-card::before{left:8%;top:18%}.evolution-card::after{right:9%;top:11%;animation-delay:.4s}
+    @keyframes twinkle{from{transform:scale(.65) rotate(-10deg);opacity:.35}to{transform:scale(1.2) rotate(12deg);opacity:1}}
+    .evolution-kicker{font-size:12px;font-weight:1000;color:#a13b66}.evolution-title{font-size:24px;font-weight:1000;margin:4px 0 8px}
+    .evolution-row{display:flex;align-items:center;justify-content:center;gap:5px}.evolution-sprite{width:126px;height:126px}.evolution-arrow{font-size:28px;color:#f14c83;font-weight:1000}.evolution-new{font-size:16px;font-weight:1000;margin-top:6px}
+    .reward-creature{width:180px;height:180px;margin:6px auto 0}
+    .reward-actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:14px}
+    .reward-actions a{text-decoration:none}
+    .go-home{display:flex;min-height:56px;align-items:center;justify-content:center;border-radius:17px;background:linear-gradient(180deg,#ff6498,#ef3e78);color:white;font-weight:1000;font-size:17px;box-shadow:0 6px 0 #c92e61}
+    .duplicate-box{text-align:center}.duplicate-box .notice{margin-top:0}.duplicate-box a{margin-top:12px}
+    .pop-in{animation:pop .5s cubic-bezier(.2,.8,.2,1) both}@keyframes pop{0%{transform:scale(.82);opacity:0}70%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+    @media(max-width:480px){.result-page{padding:10px 8px 22px}.result-card{padding:15px;border-radius:22px}.result-creature,.reward-creature{width:145px;height:145px}.reward-breakdown{gap:4px}.reward-box{padding:8px 3px}.reward-box strong{font-size:21px}.evolution-sprite{width:105px;height:105px}.evolution-card{padding:13px 8px}}
+  </style>
 </head>
-<body>
-  <main class="shell">
-    <div class="brand">こたえあわせ 🦖</div>
-    <section class="card hero">
-      <div id="creature" class="creature dino-sprite" aria-label="きょうりゅう"></div>
-      <div id="stageName" class="stage-name"></div>
-      <p class="message">九九をがんばったぶん、きょうりゅうが そだつよ！</p>
+<body class="result-page">
+  <main class="result-wrap">
+    <div class="result-logo">🥚 きゅうきゅうザウルス</div>
+
+    <section id="entryScreen" class="entry-screen">
+      <section class="result-card result-hero">
+        <div id="creature" class="result-creature dino-sprite" aria-label="きょうりゅう"></div>
+        <div id="stageName" class="result-stage"></div>
+        <p class="result-message">九九をがんばったぶん、きょうりゅうが そだつよ！</p>
+      </section>
+
+      <section class="result-card">
+        <div id="duplicate" class="duplicate-box" hidden>
+          <div id="duplicateMessage" class="notice">このプリントは、もう成長に登録してあるよ。</div>
+          <a class="secondary" href="index.html">ホームにもどる</a>
+        </div>
+
+        <form id="resultForm" class="result-form">
+          <div class="field">
+            <label for="correct">なんもん せいかいした？</label>
+            <input id="correct" type="number" min="0" max="30" inputmode="numeric" required placeholder="0〜30" />
+          </div>
+          <div class="field">
+            <label for="minutes">なんぷん かかった？ <span class="small">（書かなくてもOK）</span></label>
+            <input id="minutes" type="number" min="1" max="120" inputmode="numeric" placeholder="例：9" />
+          </div>
+          <div id="preview" class="reward-preview">🌱 最後までやったら基本10pt！ 正解数によってボーナスもつくよ。</div>
+          <button class="primary reward-submit" type="submit">✨ がんばりを とうろくする</button>
+        </form>
+      </section>
     </section>
-    <section class="card">
-      <div id="duplicate" class="notice" hidden>このプリントは、もう成長に登録してあるよ。</div>
-      <form id="resultForm">
-        <div class="field">
-          <label for="correct">なんもん せいかいした？</label>
-          <input id="correct" type="number" min="0" max="30" inputmode="numeric" required placeholder="0〜30" />
+
+    <section id="rewardScreen" class="reward-screen" hidden>
+      <section class="result-card pop-in">
+        <div class="reward-head">
+          <span class="reward-kicker">🎉 九九プリント クリア！</span>
+          <div class="reward-score"><span id="rewardCorrect">0</span><small>/ 30もん</small></div>
+          <div id="rewardCheer" class="reward-cheer">さいごまで よくがんばったね！</div>
         </div>
-        <div class="field" style="margin-top:16px">
-          <label for="minutes">なんぷん かかった？ <span class="small">（書かなくてもOK）</span></label>
-          <input id="minutes" type="number" min="1" max="120" inputmode="numeric" placeholder="例：9" />
+
+        <div class="reward-breakdown">
+          <div class="reward-box"><span>🌱 きほん</span><strong>10</strong><em>pt</em></div>
+          <div class="reward-box"><span>⭐ せいかいボーナス</span><strong id="rewardBonus">0</strong><em>pt</em></div>
+          <div class="reward-box"><span>📝 プリント</span><strong>+1</strong><em>まい</em></div>
         </div>
-        <div id="preview" class="notice">プリントを最後までやったら、まず10せいちょう！ 正解数でボーナスもあるよ。</div>
-        <button class="primary" type="submit">🌱 きょうりゅうを そだてる</button>
-      </form>
-      <a class="secondary" href="index.html">ホームにもどる</a>
-      <p class="small">※ まちがいがあっても大丈夫。最後まで取り組んだことがいちばん大事なので、基本10ポイントは必ずつきます。</p>
+
+        <div class="reward-total">
+          <span>きょうの せいちょう</span>
+          <strong>+<span id="rewardTotal">10</span><small> pt</small></strong>
+        </div>
+        <div class="care-earned">💗 おせわできる回数が <strong>+1</strong> ふえたよ！</div>
+      </section>
+
+      <section id="evolutionCard" class="evolution-card pop-in" hidden>
+        <div class="evolution-kicker">✨ あれ……？ ようすが ちがう！</div>
+        <div class="evolution-title">せいちょうした！</div>
+        <div class="evolution-row">
+          <div id="beforeCreature" class="evolution-sprite dino-sprite"></div>
+          <div class="evolution-arrow">→</div>
+          <div id="afterCreature" class="evolution-sprite dino-sprite"></div>
+        </div>
+        <div id="newStageName" class="evolution-new"></div>
+      </section>
+
+      <section id="normalRewardCard" class="result-card result-hero pop-in">
+        <div id="rewardCreature" class="reward-creature dino-sprite"></div>
+        <div id="rewardStageName" class="result-stage"></div>
+        <p id="rewardMessage" class="result-message"></p>
+      </section>
+
+      <div class="reward-actions">
+        <a id="homeButton" class="go-home" href="index.html">🦖 きょうりゅうに 会いにいく</a>
+      </div>
     </section>
   </main>
+
   <script src="logic.js"></script>
   <script src="store.js"></script>
   <script src="assets.js"></script>
   <script>
-    const wid = new URLSearchParams(location.search).get('wid') || '';
-    const state = GameStore.getState();
-    const stage = GameLogic.stageForPoints(state.growthPoints);
-    GameAssets.show(document.getElementById('creature'), stage.asset);
-    document.getElementById('stageName').textContent = state.dinosaurName || stage.name;
+    const params = new URLSearchParams(location.search);
+    const wid = params.get('wid') || '';
+    const initialState = GameStore.getState();
+    const initialStage = GameLogic.stageForPoints(initialState.growthPoints);
+    GameAssets.show(document.getElementById('creature'), initialStage.asset);
+    document.getElementById('stageName').textContent = initialState.dinosaurName || initialStage.name;
 
-    const already = wid && state.completedWorksheetIds.includes(wid);
+    const already = wid && initialState.completedWorksheetIds.includes(wid);
     if (!wid || already) {
       document.getElementById('duplicate').hidden = false;
       document.getElementById('resultForm').hidden = true;
-      if (!wid) document.getElementById('duplicate').textContent = 'プリントIDが見つかりません。印刷したプリントのQRから開いてください。';
+      if (!wid) document.getElementById('duplicateMessage').textContent = 'プリントIDが見つかりません。印刷したプリントのQRから開いてください。';
     }
 
     const correct = document.getElementById('correct');
@@ -55,21 +146,63 @@
       if (Number.isFinite(n) && n >= 0 && n <= 30) {
         const bonus = GameLogic.bonusForCorrect(n);
         const total = GameLogic.pointsForWorksheet(n);
-        document.getElementById('preview').textContent = `🌱 10せいちょう + ボーナス ${bonus} = ${total}せいちょう！`;
+        document.getElementById('preview').textContent = `🌱 きほん 10pt ＋ ⭐ ボーナス ${bonus}pt ＝ ${total}pt せいちょう！`;
       }
     });
 
-    document.getElementById('resultForm').addEventListener('submit', (e) => {
+    function cheerForScore(n) {
+      if (n === 30) return 'パーフェクト！ ぜんぶ せいかい！';
+      if (n >= 28) return 'すごい！ とっても よくできたね！';
+      if (n >= 25) return 'いいちょうし！ よくがんばったね！';
+      return 'さいごまで やりきった！ それがいちばんすごい！';
+    }
+
+    async function showReward({beforeState, afterState, correctCount, addedPoints}) {
+      const beforeStage = GameLogic.stageForPoints(beforeState.growthPoints);
+      const afterStage = GameLogic.stageForPoints(afterState.growthPoints);
+      const evolved = beforeStage.id !== afterStage.id;
+      const bonus = GameLogic.bonusForCorrect(correctCount);
+
+      document.getElementById('entryScreen').hidden = true;
+      document.getElementById('rewardScreen').hidden = false;
+      document.getElementById('rewardCorrect').textContent = correctCount;
+      document.getElementById('rewardBonus').textContent = `+${bonus}`;
+      document.getElementById('rewardTotal').textContent = addedPoints;
+      document.getElementById('rewardCheer').textContent = cheerForScore(correctCount);
+      document.getElementById('homeButton').href = `index.html?gained=${addedPoints}`;
+
+      if (evolved) {
+        const evo = document.getElementById('evolutionCard');
+        evo.hidden = false;
+        document.getElementById('normalRewardCard').hidden = true;
+        await Promise.all([
+          GameAssets.show(document.getElementById('beforeCreature'), beforeStage.asset),
+          GameAssets.show(document.getElementById('afterCreature'), afterStage.asset)
+        ]);
+        document.getElementById('newStageName').textContent = `「${afterStage.name}」になったよ！`;
+      } else {
+        document.getElementById('evolutionCard').hidden = true;
+        document.getElementById('normalRewardCard').hidden = false;
+        await GameAssets.show(document.getElementById('rewardCreature'), afterStage.asset);
+        document.getElementById('rewardStageName').textContent = afterState.dinosaurName || afterStage.name;
+        document.getElementById('rewardMessage').textContent = afterStage.message;
+      }
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    document.getElementById('resultForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const n = Number(correct.value);
       if (!Number.isInteger(n) || n < 0 || n > 30) return;
       const minutes = document.getElementById('minutes').value;
+      const beforeState = GameStore.getState();
       const result = GameStore.registerWorksheet({ worksheetId: wid, correct: n, minutes });
       if (result.duplicate) {
-        alert('このプリントは登録済みです。');
+        document.getElementById('duplicate').hidden = false;
+        document.getElementById('resultForm').hidden = true;
         return;
       }
-      location.href = `index.html?gained=${result.addedPoints}`;
+      await showReward({beforeState, afterState:result.state, correctCount:n, addedPoints:result.addedPoints});
     });
   </script>
 </body>
