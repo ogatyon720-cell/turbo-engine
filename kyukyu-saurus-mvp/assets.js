@@ -17,7 +17,7 @@
     if (!document.querySelector('link[data-balance-fix]')) {
       const balance = document.createElement('link');
       balance.rel = 'stylesheet';
-      balance.href = 'balance-fix.css?v=1';
+      balance.href = 'balance-fix.css?v=2';
       balance.dataset.balanceFix = '1';
       document.head.appendChild(balance);
     }
@@ -57,6 +57,8 @@
     const url = await load();
     element.classList.add('dino-sprite');
     element.style.backgroundImage = `url("${url}")`;
+    element.style.backgroundSize = '400% 300%';
+    element.style.backgroundRepeat = 'no-repeat';
     element.style.backgroundPosition = `${x * 33.333333}% ${y * 50}%`;
   }
 
